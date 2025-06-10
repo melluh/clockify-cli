@@ -3,7 +3,6 @@ package util
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -133,7 +132,7 @@ func getProjectID(
 	projectNameSize := 0
 
 	for i := range projects {
-		projectsString[i] = fmt.Sprintf("%-4d %s", i, projects[i].Name)
+		projectsString[i] = projects[i].Name
 		if c := utf8.RuneCountInString(projectsString[i]); projectNameSize < c {
 			projectNameSize = c
 		}
@@ -178,8 +177,14 @@ func getProjectID(
 		return "", err
 	}
 
-	index, _ := strconv.Atoi(projectID[0:strings.Index(projectID, " ")])
-	return projects[index].ID, nil
+	selectedName := projectID[0:strings.Index(projectID, " ")]
+	for i := range projects {
+		if projects[i].Name == selectedName {
+			return projects[i].ID, nil
+		}
+	}
+
+	return "", err
 }
 
 const noTask = "No Task"
