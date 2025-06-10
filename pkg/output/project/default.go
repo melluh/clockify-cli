@@ -1,7 +1,6 @@
 package project
 
 import (
-	"fmt"
 	"io"
 	"os"
 
@@ -14,7 +13,7 @@ import (
 // ProjectPrint will print more details
 func ProjectPrint(ps []dto.Project, w io.Writer) error {
 	tw := tablewriter.NewWriter(w)
-	tw.SetHeader([]string{"ID", "Name", "Client"})
+	tw.SetHeader([]string{"Name", "Client"})
 
 	if width, _, err := term.GetSize(int(os.Stdout.Fd())); err == nil {
 		tw.SetColWidth(width / 3)
@@ -23,17 +22,16 @@ func ProjectPrint(ps []dto.Project, w io.Writer) error {
 	colors := make([]tablewriter.Colors, 3)
 	for i := 0; i < len(ps); i++ {
 		w := ps[i]
-		client := ""
+		client := "(none)"
 		if w.ClientID != "" {
-			client = fmt.Sprintf("%s (%s)", w.ClientName, w.ClientID)
+			client = w.ClientName
 		}
 		colors[1] = []int{}
 		if w.Color != "" {
-			colors[1] = util.ColorToTermColor(w.Color)
+			colors[0] = util.ColorToTermColor(w.Color)
 		}
 
 		tw.Rich([]string{
-			w.ID,
 			w.Name,
 			client,
 		}, colors)
